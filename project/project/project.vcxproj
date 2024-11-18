@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>D:\Repository\opengl\dependencies\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>D:\Repository\opengl\dependencies\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Repository\opengl\dependencies\lib;C:\Users\c1842512\OneDrive - Cardiff University\Repo\opengl\dependencies\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Repository\opengl\dependencies\include;C:\Users\c1842512\OneDrive - Cardiff University\Repo\opengl\dependencies\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
