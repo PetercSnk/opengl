@@ -1,5 +1,6 @@
 #pragma once
 #ifndef SHADER_CLASS_H
+#define SHADER_CLASS_H
 
 #include <glad/glad.h>
 #include <fstream>
@@ -11,7 +12,7 @@
 std::string read_binary_file(const char* path);
 // compiles a shader and returns its reference identifier
 static unsigned int compile_shader(GLenum type, const char* shader);
-// creates a program object and returns its reference identifier
+// creates a program object, attaches and links shaders then returns its reference identifier
 static unsigned int create_shader(const char* vertex_shader, const char* fragment_shader);
 
 class Shader

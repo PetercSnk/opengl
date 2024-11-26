@@ -1,3 +1,6 @@
-﻿  main.cpp
-C:\Users\c1842512\OneDrive - Cardiff University\Repo\opengl\project\project\src\main.cpp(141,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  project.vcxproj -> C:\Users\c1842512\OneDrive - Cardiff University\Repo\opengl\project\x64\Debug\project.exe
+﻿  glad.c
+  main.cpp
+D:\Repository\opengl\project\project\src\main.cpp(141,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  shader.cpp
+  Generating Code...
+  project.vcxproj -> D:\Repository\opengl\project\x64\Debug\project.exe
