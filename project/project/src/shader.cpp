@@ -27,69 +27,86 @@ std::string read_binary_file(const char* path)
 	}
 }
 
-unsigned int compile_shader(GLenum shader_type, const char* shader_source)
+unsigned int compile_shader(GLenum type, const char* source)
 {
 	// create shader object for the specified type
-	unsigned int shader_id = glCreateShader(shader_type);
+	unsigned int shader = glCreateShader(type);
 	// attach the shader source to the shader object
-	glShaderSource(shader_id, 1, &shader_source, nullptr);
+	glShaderSource(shader, 1, &source, nullptr);
 	// compile shader
-	glCompileShader(shader_id);
+	glCompileShader(shader);
 	// check for compilation errors
 	int success;
 	char log[512];
 	// retrieve the compilation status parameter from the shader object
-	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
 		// retrieve the information log for the shader object
-		glGetShaderInfoLog(shader_id, 512, NULL, log);
-		std::cout << (shader_type == GL_VERTEX_SHADER ? "Vertex" : "Fragment") << "compilation failed" << std::endl;
+		glGetShaderInfoLog(shader, 512, NULL, log);
+		std::cout << (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment") << " compilation failed" << std::endl;
 		std::cout << log << std::endl;
 		// free occupied memory
-		glDeleteShader(shader_id);
+		glDeleteShader(shader);
 		return 0;
 	}
-	return shader_id;
+	return shader;
 }
 
-unsigned int create_shader(const char* vertex_shader_source, const char* fragment_shader_source)
+unsigned int create_shader(const char* vertex_source, const char* fragment_source)
 {
 	// compile both shaders
-	unsigned int vertex_shader_id = compile_shader(GL_VERTEX_SHADER, vertex_shader_source);
-	unsigned int fragment_shader_id = compile_shader(GL_FRAGMENT_SHADER, fragment_shader_source);
+	unsigned int vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex_source);
+	unsigned int fragment_shader = compile_shader(GL_FRAGMENT_SHADER, fragment_source);
 	// create program object
-	unsigned int program_id = glCreateProgram();
+	unsigned int program = glCreateProgram();
 	// attach and link compiled shaders to program object
-	glAttachShader(program_id, vertex_shader_id);
-	glAttachShader(program_id, fragment_shader_id);
-	glLinkProgram(program_id);
+	glAttachShader(program, vertex_shader);
+	glAttachShader(program, fragment_shader);
+	glLinkProgram(program);
 	// check for linking errors
 	int success;
 	char log[512];
 	// retrieve the linking status parameter from the program object
-	glGetProgramiv(program_id, GL_LINK_STATUS, &success);
+	glGetProgramiv(program, GL_LINK_STATUS, &success);
 	if (!success)
 	{
 		// retrieve the information log for the program object
-		glGetProgramInfoLog(program_id, 512, NULL, log);
+		glGetProgramInfoLog(program, 512, NULL, log);
 		std::cout << "Linking failed" << std::endl;
 		std::cout << log << std::endl;
 		// free occupied memory
-		glDeleteProgram(program_id);
+		glDeleteProgram(program);
 		return 0;
 	}
 	// delete shader objects after linking
-	glDeleteShader(vertex_shader_id);
-	glDeleteShader(fragment_shader_id);
-	return program_id;
+	glDeleteShader(vertex_shader);
+	glDeleteShader(fragment_shader);
+	return program;
 }
 
-Shader::Shader(const char* vertex_shader_path, const char* fragment_shader_path)
+Shader::Shader(const char* vertex_path, const char* fragment_path)
 {
 	// read both shaders & convert to c string
-	const char* vertex_shader_source = read_binary_file(vertex_shader_path).c_str();
-	const char* fragment_shader_source = read_binary_file(fragment_shader_path).c_str();
+	std::string vertex_source_str = read_binary_file(vertex_path);
+	std::string fragment_source_str = read_binary_file(fragment_path);
+	const char* vertex_source = vertex_source_str.c_str();
+	const char* fragment_source = fragment_source_str.c_str();
 	// create program object
-	id = create_shader(vertex_shader_source, fragment_shader_source);
+	program = create_shader(vertex_source, fragment_source);
+}
+
+void Shader::bind() const
+{
+	glUseProgram(program);
+}
+
+void Shader::unbind() const
+{
+	glUseProgram(0);
+}
+
+void Shader::del()
+{
+	glDeleteProgram(program);
 }

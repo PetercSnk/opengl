@@ -1,6 +1,4 @@
-﻿  glad.c
-  main.cpp
-D:\Repository\opengl\project\project\src\main.cpp(141,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  shader.cpp
-  Generating Code...
-  project.vcxproj -> D:\Repository\opengl\project\x64\Debug\project.exe
+﻿  shader.cpp
+C:\Users\c1842512\OneDrive - Cardiff University\Repo\opengl\project\project\src\shader.cpp(13,12): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+C:\Users\c1842512\OneDrive - Cardiff University\Repo\opengl\project\project\src\shader.cpp(28,1): warning C4715: 'read_binary_file': not all control paths return a value
+  project.vcxproj -> C:\Users\c1842512\OneDrive - Cardiff University\Repo\opengl\project\x64\Debug\project.exe
