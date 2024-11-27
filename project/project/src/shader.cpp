@@ -27,30 +27,30 @@ std::string read_binary_file(const char* path)
 	}
 }
 
-unsigned int compile_shader(GLenum type, const char* source)
+unsigned int compile_shader(GLenum shader_type, const char* shader_source)
 {
 	// create shader object for the specified type
-	unsigned int id = glCreateShader(type);
+	unsigned int shader_id = glCreateShader(shader_type);
 	// attach the shader source to the shader object
-	glShaderSource(id, 1, &source, nullptr);
+	glShaderSource(shader_id, 1, &shader_source, nullptr);
 	// compile shader
-	glCompileShader(id);
+	glCompileShader(shader_id);
 	// check for compilation errors
 	int success;
 	char log[512];
 	// retrieve the compilation status parameter from the shader object
-	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
 		// retrieve the information log for the shader object
-		glGetShaderInfoLog(id, 512, NULL, log);
-		std::cout << (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment") << "compilation failed" << std::endl;
+		glGetShaderInfoLog(shader_id, 512, NULL, log);
+		std::cout << (shader_type == GL_VERTEX_SHADER ? "Vertex" : "Fragment") << "compilation failed" << std::endl;
 		std::cout << log << std::endl;
 		// free occupied memory
-		glDeleteShader(id);
+		glDeleteShader(shader_id);
 		return 0;
 	}
-	return id;
+	return shader_id;
 }
 
 unsigned int create_shader(const char* vertex_shader_source, const char* fragment_shader_source)
@@ -83,4 +83,13 @@ unsigned int create_shader(const char* vertex_shader_source, const char* fragmen
 	glDeleteShader(vertex_shader_id);
 	glDeleteShader(fragment_shader_id);
 	return program_id;
+}
+
+Shader::Shader(const char* vertex_shader_path, const char* fragment_shader_path)
+{
+	// read both shaders & convert to c string
+	const char* vertex_shader_source = read_binary_file(vertex_shader_path).c_str();
+	const char* fragment_shader_source = read_binary_file(fragment_shader_path).c_str();
+	// create program object
+	id = create_shader(vertex_shader_source, fragment_shader_source);
 }
