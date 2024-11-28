@@ -29,7 +29,7 @@ std::string read_binary_file(const char* path)
 
 unsigned int compile_shader(GLenum type, const char* source)
 {
-	// create shader object for the specified type
+	// create shader object for the specified type (shader is an id by which it can be referenced)
 	unsigned int shader = glCreateShader(type);
 	// attach the shader source to the shader object
 	glShaderSource(shader, 1, &source, nullptr);
@@ -55,10 +55,10 @@ unsigned int compile_shader(GLenum type, const char* source)
 
 unsigned int create_shader(const char* vertex_source, const char* fragment_source)
 {
-	// compile both shaders
+	// compile vertex and fragment shader
 	unsigned int vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex_source);
 	unsigned int fragment_shader = compile_shader(GL_FRAGMENT_SHADER, fragment_source);
-	// create program object
+	// create program object (program is an id by which it can be referenced)
 	unsigned int program = glCreateProgram();
 	// attach and link compiled shaders to program object
 	glAttachShader(program, vertex_shader);
@@ -87,12 +87,12 @@ unsigned int create_shader(const char* vertex_source, const char* fragment_sourc
 
 Shader::Shader(const char* vertex_path, const char* fragment_path)
 {
-	// read both shaders & convert to c string
+	// read in vertex and fragment shader
 	std::string vertex_source_str = read_binary_file(vertex_path);
 	std::string fragment_source_str = read_binary_file(fragment_path);
 	const char* vertex_source = vertex_source_str.c_str();
 	const char* fragment_source = fragment_source_str.c_str();
-	// create program object
+	// create program object for this instance
 	program = create_shader(vertex_source, fragment_source);
 }
 
@@ -109,4 +109,22 @@ void Shader::unbind() const
 void Shader::del()
 {
 	glDeleteProgram(program);
+}
+
+void Shader::set_bool(const char* name, bool value) const
+{
+	bool uniform = glGetUniformLocation(program, name);
+	glUniform1i(uniform, (int)value);
+}
+
+void Shader::set_int(const char* name, int value) const
+{
+	int uniform = glGetUniformLocation(program, name);
+	glUniform1i(uniform, value);
+}
+
+void Shader::set_float(const char* name, float value) const
+{
+	float uniform = glGetUniformLocation(program, name);
+	glUniform1f(uniform, value);
 }
