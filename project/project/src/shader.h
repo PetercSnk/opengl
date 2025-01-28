@@ -20,7 +20,7 @@ class Shader
 public:
 	// program object identifier
 	unsigned int program;
-	// constructor reads, compiles, and creates shader
+	// constructor reads, compiles, and creates shaders
 	Shader(const char* vertex_path, const char* fragment_path);
 	// binds program object
 	void bind() const;
