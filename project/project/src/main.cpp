@@ -8,6 +8,8 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input(GLFWwindow* window);
 
+float m = 0.2f;
+
 int main()
 {
 	// initialise and configure glfw
@@ -107,8 +109,8 @@ int main()
 	glGenTextures(1, &texture2);
 	glBindTexture(GL_TEXTURE_2D, texture2);
 	// texture wrapping
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 	// texture filtering
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -129,7 +131,6 @@ int main()
 	shader.set_int("texture1", 0);
 	shader.set_int("texture2", 1);
 
-
 	// render loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -142,6 +143,7 @@ int main()
 		//float norm = sin(time) / 2.0f;
 		//shader.set_float("xoffset", norm);
 		//shader.set_float("yoffset", norm);
+
 		
 		//int xoffset = glGetUniformLocation(shader.program, "xoffset");
 		//glUniform4f(vertexColorLocation, 0.0f, green, 0.0f, 1.0f);
@@ -150,6 +152,8 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
+
+		shader.set_float("m", m);
 
 		shader.bind();
 		glBindVertexArray(vao);
@@ -177,4 +181,18 @@ void process_input(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		if (m >= 1.0f)
+			m = 1.0f;
+		else
+			m += 0.0001f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		if (m <= 0.0f)
+			m = 0.0f;
+		else
+			m -= 0.0001f;
+	}
 }
