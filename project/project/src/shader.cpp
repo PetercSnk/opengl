@@ -29,7 +29,7 @@ std::string read_binary_file(const char* path)
 
 unsigned int compile_shader(GLenum type, const char* source)
 {
-	// create shader object for the specified type (shader is an id by which it can be referenced)
+	// create shader object for the specified type
 	unsigned int shader = glCreateShader(type);
 	// attach the shader source to the shader object
 	glShaderSource(shader, 1, &source, nullptr);
@@ -58,7 +58,7 @@ unsigned int create_shader(const char* vertex_source, const char* fragment_sourc
 	// compile vertex and fragment shader
 	unsigned int vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex_source);
 	unsigned int fragment_shader = compile_shader(GL_FRAGMENT_SHADER, fragment_source);
-	// create program object (program is an id by which it can be referenced)
+	// create program object
 	unsigned int program = glCreateProgram();
 	// attach and link compiled shaders to program object
 	glAttachShader(program, vertex_shader);
@@ -92,7 +92,7 @@ Shader::Shader(const char* vertex_path, const char* fragment_path)
 	std::string fragment_source_str = read_binary_file(fragment_path);
 	const char* vertex_source = vertex_source_str.c_str();
 	const char* fragment_source = fragment_source_str.c_str();
-	// create program object for this instance
+	// create program object with given shaders
 	program = create_shader(vertex_source, fragment_source);
 }
 

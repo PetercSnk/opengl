@@ -1,0 +1,26 @@
+#include "VBO.h"
+
+VBO::VBO(unsigned int size, const float* vertices)
+{
+	// generate one buffer object
+	glGenBuffers(1, &id);
+	// bind buffer object to opengl's array buffer
+	glBindBuffer(GL_ARRAY_BUFFER, id);
+	// copy vertex data into the currently bound buffer object
+	glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+}
+
+void VBO::bind() const
+{
+	glBindBuffer(GL_ARRAY_BUFFER, id);
+}
+
+void VBO::unbind() const
+{
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void VBO::del()
+{
+	glDeleteBuffers(1, &id);
+}
