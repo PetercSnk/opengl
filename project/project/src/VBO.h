@@ -8,7 +8,7 @@ class VBO
 {
 private:
 	// vertex buffer object identifier
-	unsigned int id;
+	GLuint vbo;
 public:
 	// generates and binds buffer object, then copies vertex data into it
 	VBO(unsigned int size, const float* vertices);
