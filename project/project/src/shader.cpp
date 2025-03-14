@@ -27,17 +27,17 @@ std::string read_binary_file(const char* path)
 	}
 }
 
-unsigned int compile_shader(GLenum type, const char* source)
+GLuint compile_shader(GLenum type, const GLchar* source)
 {
 	// create shader object for the specified type
-	unsigned int shader = glCreateShader(type);
+	GLuint shader = glCreateShader(type);
 	// attach the shader source to the shader object
 	glShaderSource(shader, 1, &source, nullptr);
 	// compile shader
 	glCompileShader(shader);
 	// check for compilation errors
-	int success;
-	char log[512];
+	GLint success;
+	GLchar log[512];
 	// retrieve the compilation status parameter from the shader object
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success)
@@ -53,20 +53,20 @@ unsigned int compile_shader(GLenum type, const char* source)
 	return shader;
 }
 
-unsigned int create_shader(const char* vertex_source, const char* fragment_source)
+GLuint create_shader(const GLchar* vertex_source, const GLchar* fragment_source)
 {
 	// compile vertex and fragment shader
-	unsigned int vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex_source);
-	unsigned int fragment_shader = compile_shader(GL_FRAGMENT_SHADER, fragment_source);
+	GLuint vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex_source);
+	GLuint fragment_shader = compile_shader(GL_FRAGMENT_SHADER, fragment_source);
 	// create program object
-	unsigned int program = glCreateProgram();
+	GLuint program = glCreateProgram();
 	// attach and link compiled shaders to program object
 	glAttachShader(program, vertex_shader);
 	glAttachShader(program, fragment_shader);
 	glLinkProgram(program);
 	// check for linking errors
-	int success;
-	char log[512];
+	GLint success;
+	GLchar log[512];
 	// retrieve the linking status parameter from the program object
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
 	if (!success)
@@ -90,8 +90,8 @@ Shader::Shader(const char* vertex_path, const char* fragment_path)
 	// read in vertex and fragment shader
 	std::string vertex_source_str = read_binary_file(vertex_path);
 	std::string fragment_source_str = read_binary_file(fragment_path);
-	const char* vertex_source = vertex_source_str.c_str();
-	const char* fragment_source = fragment_source_str.c_str();
+	const GLchar* vertex_source = vertex_source_str.c_str();
+	const GLchar* fragment_source = fragment_source_str.c_str();
 	// create program object with given shaders
 	program = create_shader(vertex_source, fragment_source);
 }
@@ -127,4 +127,10 @@ void Shader::set_float(const char* name, float value) const
 {
 	float uniform = glGetUniformLocation(program, name);
 	glUniform1f(uniform, value);
+}
+
+void Shader::set_mat4fv(const char* name, glm::mat4 value) const
+{
+	unsigned int uniform = glGetUniformLocation(program, name);
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, glm::value_ptr(value));
 }

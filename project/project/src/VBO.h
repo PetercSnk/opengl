@@ -11,7 +11,7 @@ private:
 	GLuint vbo;
 public:
 	// generates and binds buffer object, then copies vertex data into it
-	VBO(unsigned int size, const float* vertices);
+	VBO(GLsizeiptr size, const GLvoid* vertices);
 	// binds, unbinds, and deletes buffer object
 	void bind() const;
 	void unbind() const;

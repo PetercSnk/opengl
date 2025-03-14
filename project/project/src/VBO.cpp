@@ -1,6 +1,6 @@
 #include "vbo.h"
 
-VBO::VBO(unsigned int size, const float* vertices)
+VBO::VBO(GLsizeiptr size, const GLvoid* vertices)
 {
 	// generates one buffer object
 	glGenBuffers(1, &vbo);

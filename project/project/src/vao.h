@@ -14,7 +14,7 @@ public:
 	// generates vertex array object
 	VAO();
 	// links vertex attributes
-	void link_attrib(VBO& vbo, GLuint location, GLuint size, GLenum type, GLboolean normalized, GLsizeiptr stride, GLvoid* offset);
+	void link_attrib(VBO& vbo, GLuint index, GLuint size, GLenum type, GLboolean normalized, GLsizeiptr stride, GLvoid* offset);
 	// binds, unbinds, and deletes array object
 	void bind() const;
 	void unbind() const;

@@ -1,6 +1,6 @@
 #include "ebo.h"
 
-EBO::EBO(unsigned int size, const unsigned int* indices)
+EBO::EBO(GLsizeiptr size, const GLvoid* indices)
 {
 	// generates one buffer object
 	glGenBuffers(1, &ebo);

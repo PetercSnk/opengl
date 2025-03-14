@@ -183,14 +183,8 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		unsigned int model_loc = glGetUniformLocation(shader.program, "model");
-		//glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
-
-		unsigned int view_loc = glGetUniformLocation(shader.program, "view");
-		glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
-
-		unsigned int projection_loc = glGetUniformLocation(shader.program, "projection");
-		glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
+		shader.set_mat4fv("view", view);
+		shader.set_mat4fv("projection", projection);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
@@ -214,7 +208,7 @@ int main()
 			{
 				model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.5f, 0.0f));
 			}
-			glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+			shader.set_mat4fv("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 

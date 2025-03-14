@@ -11,7 +11,7 @@ private:
 	GLuint ebo;
 public:
 	// generates and binds buffer object, then copies index data into it
-	EBO(unsigned int size, const unsigned int* indices);
+	EBO(GLsizeiptr size, const GLvoid* indices);
 	// binds, unbinds, and deletes buffer object
 	void bind() const;
 	void unbind() const;
