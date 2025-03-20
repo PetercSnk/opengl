@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "shader.h"
-#include "stb_image.h"
+#include "texture.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -96,8 +96,8 @@ int main()
 	//glm::mat4 model = glm::mat4(1.0f);
 	//model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	//glm::mat4 view = glm::mat4(1.0f);
+	//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
 	glm::mat4 projection;
 	projection = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.f);
@@ -108,57 +108,16 @@ int main()
 	vao.link_attrib(vbo, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	vao.link_attrib(vbo, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	vao.unbind();
-
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	
 	
-	unsigned int texture1, texture2;
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	// texture wrapping
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// texture filtering
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	int width, height, num_channels;
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load("D:\\Repository\\opengl\\project\\project\\src\\textures\\container.jpg", &width, &height, &num_channels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
-
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	// texture wrapping
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	// texture filtering
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	data = stbi_load("D:\\Repository\\opengl\\project\\project\\src\\textures\\awesomeface.png", &width, &height, &num_channels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
+	const char* container = "D:\\Repository\\opengl\\project\\project\\src\\textures\\container.jpg";
+	const char* awsomeface = "D:\\Repository\\opengl\\project\\project\\src\\textures\\awesomeface.png";
+	Texture tex1(container, GL_RGB, GL_REPEAT, GL_LINEAR);
+	Texture tex2(awsomeface, GL_RGBA, GL_REPEAT, GL_LINEAR);
 
 	shader.bind();
 	shader.set_int("texture1", 0);
 	shader.set_int("texture2", 1);
+
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -183,18 +142,26 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		shader.set_mat4fv("view", view);
+
 		shader.set_mat4fv("projection", projection);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
+		tex1.bind(GL_TEXTURE0);
+		tex2.bind(GL_TEXTURE1);
 
 		shader.set_float("m", m);
 
 		shader.bind();
 		vao.bind();
+
+		const float r = 10.0f;
+		float cam_x = sin(glfwGetTime()) * r;
+		float cam_z = cos(glfwGetTime()) * r;
+
+		glm::mat4 view = glm::lookAt(glm::vec3(cam_x, 0.0f, cam_z),
+			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f));
+
+		shader.set_mat4fv("view", view);
 
 		for (unsigned int i = 0; i < 10; i++)
 		{
