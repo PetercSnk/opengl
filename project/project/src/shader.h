@@ -19,9 +19,10 @@ GLuint create_shader(const GLchar* vertex_source, const GLchar* fragment_source)
 
 class Shader
 {
-public:
+private:
 	// program object identifier
 	GLuint program;
+public:
 	// reads, compiles, and creates shaders
 	Shader(const char* vertex_path, const char* fragment_path);
 	// binds, unbinds, and deletes program object
