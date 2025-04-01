@@ -64,10 +64,10 @@ int main()
 	}
 
 	// build, compile, and link shaders
-	//const char* v = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\vertex.vert";
-	//const char* f = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\fragment.frag";
-	const char* v = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\vertex.vert";
-	const char* f = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\fragment.frag";
+	const char* v = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\vertex.vert";
+	const char* f = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\fragment.frag";
+	//const char* v = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\vertex.vert";
+	//const char* f = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\fragment.frag";
 	Shader shader(v, f);
 
 	float vertices[] = {
@@ -121,10 +121,13 @@ int main()
 	vao.link_attrib(vbo, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	vao.unbind();
 	
-	const char* container = "D:\\Repository\\opengl\\project\\project\\src\\textures\\container.jpg";
-	const char* awsomeface = "D:\\Repository\\opengl\\project\\project\\src\\textures\\awesomeface.png";
+
+	const char* container = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\textures\\container.jpg";
+	const char* awesomeface = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\textures\\awesomeface.png";
+	//const char* container = "D:\\Repository\\opengl\\project\\project\\src\\textures\\container.jpg";
+	//const char* awesomeface = "D:\\Repository\\opengl\\project\\project\\src\\textures\\awesomeface.png";
 	Texture tex1(container, GL_RGB, GL_REPEAT, GL_LINEAR);
-	Texture tex2(awsomeface, GL_RGBA, GL_REPEAT, GL_LINEAR);
+	Texture tex2(awesomeface, GL_RGBA, GL_REPEAT, GL_LINEAR);
 
 	shader.bind();
 	shader.set_int("texture1", 0);
