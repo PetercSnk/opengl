@@ -1,6 +1,6 @@
 #include "camera.h"
 
-Camera::Camera(glm::vec3 position = POSITION, glm::vec3 front = FRONT, glm::vec3 world_up = WORLD_UP, float yaw = YAW, float pitch = PITCH, float sens = SENS, float speed = SPEED, float fov = FOV)
+Camera::Camera(glm::vec3 position, glm::vec3 front, glm::vec3 world_up, float yaw, float pitch, float sens, float speed, float fov)
 {
 	this->position = position;
 	this->front = front;
@@ -20,11 +20,11 @@ glm::mat4 Camera::get_view_matrix()
 
 void Camera::update()
 {
-	glm::vec3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front = glm::normalize(front);
+	glm::vec3 new_front;
+	new_front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	new_front.y = sin(glm::radians(pitch));
+	new_front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front = glm::normalize(new_front);
 	right = glm::normalize(glm::cross(front, world_up));
 	up = glm::normalize(glm::cross(right, front));
 }
@@ -33,11 +33,33 @@ void Camera::process_keyboard(directions direction, float delta_time)
 {
 	float velocity = speed * delta_time;
 	if (direction == FORWARD)
-		position += speed * front;
+		position += front * velocity;
 	if (direction == BACKWARD)
-		position -= speed * front;
+		position -= front * velocity;
 	if (direction == LEFT)
-		position -= glm::normalize(glm::cross(front, up)) * speed;
+		position -= glm::normalize(glm::cross(front, up)) * velocity;
 	if (direction == RIGHT)
-		position += glm::normalize(glm::cross(front, up)) * speed;
+		position += glm::normalize(glm::cross(front, up)) * velocity;
+}
+
+void Camera::process_mouse(float dx, float dy)
+{
+	dx *= sens;
+	dy *= sens;
+	yaw += dx;
+	pitch -= dy;
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+	update();
+}
+
+void Camera::process_scroll(float dy)
+{
+	fov -= (float)dy;
+	if (fov < 1.0f)
+		fov = 1.0f;
+	if (fov > 90.0f)
+		fov = 90.f;
 }

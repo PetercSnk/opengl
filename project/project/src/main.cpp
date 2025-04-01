@@ -9,6 +9,7 @@
 #include "vbo.h"
 #include "vao.h"
 #include "ebo.h"
+#include "camera.h"
 
 // function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -23,16 +24,10 @@ float m = 0.2f;
 float delta_time = 0.0f;
 float last_frame = 0.0f;
 
-glm::vec3 camera_position = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 camera_front = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 camera_up = glm::vec3(0.0f, 1.0f, 0.0f);
-
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 bool first_mouse = true;
-float yaw = -90.0f;
-float pitch = 0.0f;
 float xlast = (float)width / 2.0f;
 float ylast = (float)height / 2.0f;
-float fov = 45.0f;
 
 int main()
 {
@@ -64,10 +59,10 @@ int main()
 	}
 
 	// build, compile, and link shaders
-	const char* v = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\vertex.vert";
-	const char* f = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\fragment.frag";
-	//const char* v = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\vertex.vert";
-	//const char* f = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\fragment.frag";
+	//const char* v = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\vertex.vert";
+	//const char* f = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\fragment.frag";
+	const char* v = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\vertex.vert";
+	const char* f = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\fragment.frag";
 	Shader shader(v, f);
 
 	float vertices[] = {
@@ -122,10 +117,10 @@ int main()
 	vao.unbind();
 	
 
-	const char* container = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\textures\\container.jpg";
-	const char* awesomeface = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\textures\\awesomeface.png";
-	//const char* container = "D:\\Repository\\opengl\\project\\project\\src\\textures\\container.jpg";
-	//const char* awesomeface = "D:\\Repository\\opengl\\project\\project\\src\\textures\\awesomeface.png";
+	//const char* container = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\textures\\container.jpg";
+	//const char* awesomeface = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\textures\\awesomeface.png";
+	const char* container = "D:\\Repository\\opengl\\project\\project\\src\\textures\\container.jpg";
+	const char* awesomeface = "D:\\Repository\\opengl\\project\\project\\src\\textures\\awesomeface.png";
 	Texture tex1(container, GL_RGB, GL_REPEAT, GL_LINEAR);
 	Texture tex2(awesomeface, GL_RGBA, GL_REPEAT, GL_LINEAR);
 
@@ -168,9 +163,9 @@ int main()
 		shader.bind();
 		vao.bind();
 
-		glm::mat4 projection = glm::perspective(glm::radians(fov), (float)width / (float)height, 0.1f, 100.f);
+		glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)width / (float)height, 0.1f, 100.f);
 		shader.set_mat4fv("projection", projection);
-		glm::mat4 view = glm::lookAt(camera_position, camera_position + camera_front, camera_up);
+		glm::mat4 view = camera.get_view_matrix();
 		shader.set_mat4fv("view", view);
 
 		for (unsigned int i = 0; i < 10; i++)
@@ -213,33 +208,16 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 		ylast = ypos;
 		first_mouse = false;
 	}
-	float xoffset = xpos - xlast;
-	float yoffset = ypos - ylast;
+	float dx = xpos - xlast;
+	float dy = ypos - ylast;
 	xlast = xpos;
 	ylast = ypos;
-	const float sens = 0.1f;
-	xoffset *= sens;
-	yoffset *= sens;
-	yaw += xoffset;
-	pitch -= yoffset;
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	camera_front = glm::normalize(direction);
+	camera.process_mouse(dx, dy);
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+void scroll_callback(GLFWwindow* window, double dx, double dy)
 {
-	fov -= (float)yoffset;
-	if (fov < 1.0f)
-		fov = 1.0f;
-	if (fov > 90.0f)
-		fov = 90.f;
+	camera.process_scroll(dy);
 }
 
 // process input
@@ -261,13 +239,12 @@ void process_input(GLFWwindow* window)
 		else
 			m -= 0.0001f;
 	}
-	float camera_speed = 2.5f * delta_time;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera_position += camera_speed * camera_front;
+		camera.process_keyboard(FORWARD, delta_time);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera_position -= camera_speed * camera_front;
+		camera.process_keyboard(BACKWARD, delta_time);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera_position -= glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed;
+		camera.process_keyboard(LEFT, delta_time);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera_position += glm::normalize(glm::cross(camera_front, camera_up)) * camera_speed;
+		camera.process_keyboard(RIGHT, delta_time);
 }
