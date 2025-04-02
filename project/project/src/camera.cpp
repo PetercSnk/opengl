@@ -37,9 +37,9 @@ void Camera::process_keyboard(directions direction, float delta_time)
 	if (direction == BACKWARD)
 		position -= front * velocity;
 	if (direction == LEFT)
-		position -= glm::normalize(glm::cross(front, up)) * velocity;
+		position -= right * velocity;
 	if (direction == RIGHT)
-		position += glm::normalize(glm::cross(front, up)) * velocity;
+		position += right * velocity;
 }
 
 void Camera::process_mouse(float dx, float dy)
