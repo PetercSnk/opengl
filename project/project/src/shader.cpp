@@ -111,26 +111,26 @@ void Shader::del()
 	glDeleteProgram(program);
 }
 
-void Shader::set_bool(const char* name, bool value) const
-{
-	bool uniform = glGetUniformLocation(program, name);
-	glUniform1i(uniform, (int)value);
-}
-
 void Shader::set_int(const char* name, int value) const
 {
-	int uniform = glGetUniformLocation(program, name);
+	GLint uniform = glGetUniformLocation(program, name);
 	glUniform1i(uniform, value);
 }
 
 void Shader::set_float(const char* name, float value) const
 {
-	float uniform = glGetUniformLocation(program, name);
+	GLint uniform = glGetUniformLocation(program, name);
 	glUniform1f(uniform, value);
 }
 
-void Shader::set_mat4fv(const char* name, glm::mat4 value) const
+void Shader::set_mat4(const char* name, glm::mat4 value) const
 {
-	unsigned int uniform = glGetUniformLocation(program, name);
+	GLint uniform = glGetUniformLocation(program, name);
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void Shader::set_vec3(const char* name, glm::vec3 value) const
+{
+	GLint uniform = glGetUniformLocation(program, name);
+	glUniform3fv(uniform, 1, glm::value_ptr(value));
 }
