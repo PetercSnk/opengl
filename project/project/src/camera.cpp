@@ -40,6 +40,10 @@ void Camera::process_keyboard(directions direction, float delta_time)
 		position -= right * velocity;
 	if (direction == RIGHT)
 		position += right * velocity;
+	if (direction == UP)
+		position += up * velocity;
+	if (direction == DOWN)
+		position -= up * velocity;
 }
 
 void Camera::process_mouse(float dx, float dy)

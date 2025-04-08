@@ -8,7 +8,7 @@
 
 // options for camera movement
 enum directions {
-	FORWARD, BACKWARD, LEFT, RIGHT
+	FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN
 };
 
 class Camera
