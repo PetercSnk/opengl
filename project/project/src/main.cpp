@@ -59,11 +59,12 @@ int main()
 	}
 
 	// build, compile, and link shaders
-	//const char* v = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\vertex.vert";
-	//const char* f = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\fragment.frag";
-	const char* v = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\vertex.vert";
-	const char* f = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\fragment.frag";
-	const char* l = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\light.frag";
+	const char* v = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\vertex.vert";
+	const char* f = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\fragment.frag";
+	const char* l = "C:\\Users\\c1842512\\OneDrive - Cardiff University\\Repo\\opengl\\project\\project\\src\\shaders\\light.frag";
+	//const char* v = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\vertex.vert";
+	//const char* f = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\fragment.frag";
+	//const char* l = "D:\\Repository\\opengl\\project\\project\\src\\shaders\\light.frag";
 	Shader shader(v, f);
 	Shader light(v, l);
 
@@ -111,8 +112,6 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 	};
 
-	glm::vec3 light_position(0.0f, 0.0f, 0.0f);
-
 	VBO vbo(sizeof(vertices), vertices);
 
 	VAO vao;
@@ -150,20 +149,26 @@ int main()
 		delta_time = current_frame - last_frame;
 		last_frame = current_frame;
 
+		glm::vec3 trans;
+		trans.x = cos(current_frame) * 6.0f;
+		trans.y = sin(current_frame) * 6.0f;
+		trans.z = 0.0f;
+		//glm::vec3 lightPos = glm::translate(glm::mat4(1.0f), trans) * glm::vec3(0.0f, 0.0f, 0.0f);
+
 		//tex1.bind(GL_TEXTURE0);
 		//tex2.bind(GL_TEXTURE1);
 
 		shader.bind();
 		shader.set_vec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		shader.set_vec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-		shader.set_vec3("lightPos", light_position);
+		shader.set_vec3("lightPos", trans);
+		shader.set_vec3("viewPos", camera.position);
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)width / (float)height, 0.1f, 100.f);
 		glm::mat4 view = camera.get_view_matrix();
 		shader.set_mat4("projection", projection);
 		shader.set_mat4("view", view);
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(1.5f, -2.2f, -2.5f));
 		shader.set_mat4("model", model);
 		vao.bind();
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -173,6 +178,7 @@ int main()
 		light.set_mat4("view", view);
 		model = glm::mat4(1.0f);
 		model = glm::scale(model, glm::vec3(0.2f));
+		model = glm::translate(model, trans);
 		light.set_mat4("model", model);
 		light_vao.bind();
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -227,4 +233,8 @@ void process_input(GLFWwindow* window)
 		camera.process_keyboard(LEFT, delta_time);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.process_keyboard(RIGHT, delta_time);
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		camera.process_keyboard(UP, delta_time);
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+		camera.process_keyboard(DOWN, delta_time);
 }
